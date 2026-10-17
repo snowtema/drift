@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/snowtema/drift/internal/protocol"
 )
 
@@ -425,21 +426,22 @@ func (m Model) renderDetail(w, h int) string {
 		add("    " + Dim.Render("G to add a goal"))
 	}
 	for i, g := range p.Goals {
+		goalText := ansi.Truncate(g.Text, w-6, "…")
 		isCursor := goalsActive && i == m.detailCursor
 		var icon, text string
 		if g.Done {
 			icon = GreenS.Render("✓")
-			text = Dim.Render(g.Text)
+			text = Dim.Render(goalText)
 		} else {
 			icon = Dim.Render("○")
-			text = g.Text
+			text = goalText
 		}
 		if isCursor {
 			prefix := AccentB.Render("› ")
 			if g.Done {
-				add(prefix + "  " + GreenS.Render("✓ ") + Accent.Render(g.Text))
+				add(prefix + "  " + GreenS.Render("✓ ") + Accent.Render(goalText))
 			} else {
-				add(prefix + "  " + Dim.Render("○ ") + AccentB.Render(g.Text))
+				add(prefix + "  " + Dim.Render("○ ") + AccentB.Render(goalText))
 			}
 		} else {
 			add(fmt.Sprintf("    %s %s", icon, text))
